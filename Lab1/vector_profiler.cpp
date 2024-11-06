@@ -11,11 +11,9 @@ struct subvector {
 void copy(int* oldm, int* newm, unsigned  int top){
     if(oldm != nullptr){
         for(unsigned int i = 0; i < top; ++i){
-            *(newm + i) = *(oldm + i);
+            newm[i] = oldm[i];
         }
-        delete[] oldm;
     }
-    // else delete oldm; // сомнительно
 }
 
 void init(subvector *qv){ // инициализация пустого недовектора (top и capacity по нулям, а mas это NULL)
@@ -37,16 +35,16 @@ void push_back(subvector *qv, int d){ // добавление элемента �
         int* oldv = qv->mas;
         qv->mas = new int[capacity];
         copy(oldv, qv->mas, top);
+        delete [] oldv;
     }
     top += 1;
-    *(qv->mas + top - 1) = d;
+    qv->mas[top - 1] = d;
 }
 int pop_back(subvector *qv) { // удаление элемента с конца недовектора, значение удаленного элемента вернуть (если недовектор пустой, вернуть ноль)
-    auto& capacity = (qv->capacity);
     auto& top = (qv->top);
     if (top == 0) return 0;
     else{
-        int d = *(qv->mas + top - 1);
+        int d = qv->mas[top - 1];
         top -= 1;
         return d;
     }
@@ -61,9 +59,11 @@ void resize(subvector *qv, unsigned int new_capacity) { // увеличить е
         int *oldv = qv->mas;
         qv->mas = new int[capacity];
         copy(oldv, qv->mas, top);
+        delete [] oldv;
     }
     else{
         destructor(qv);
+        init(qv);
     }
 }
 void shrink_to_fit(subvector *qv){ // очистить неиспользуемую память, переехав на новое место с уменьшением capacity до top
