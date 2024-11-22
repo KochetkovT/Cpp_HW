@@ -34,13 +34,13 @@ class subforwardlist
 		return ptr;
 	}
 
-	void del()
+	void del(Node *ptr)
 	{
-		if (begin->next != nullptr)
+		if (ptr->next != nullptr)
 		{
-			del(begin->next);
+			del(ptr->next);
 		}
-		delete begin;
+		delete ptr;
 	}
 
 	void swap(subforwardlist<T> &rhs)
@@ -193,13 +193,14 @@ public:
 	} // добавление элемента в конец
 	T pop_back()
 	{
+	    T d;
 		if (begin == nullptr)
 		{
 			return T();
 		}
 		if (size() == 1)
 		{
-			T d = begin->data;
+			d = begin->data;
 			begin = nullptr;
 			end = nullptr;
 		}
@@ -207,7 +208,7 @@ public:
 		{
 			Node *pre_last;
 			pre_last = where_ptr(size() - 2);
-			T d = end->data;
+			d = end->data;
 			end = pre_last;
 		}
 		return d;
@@ -258,11 +259,11 @@ public:
 		{
 			if (where == 0)
 			{
-				push_forward(d);
+				push_forward(data);
 			}
 			else if (where == s - 1)
 			{
-				push_back(d);
+				push_back(data);
 			}
 			else if (where > 0 || where < s - 1)
 			{
