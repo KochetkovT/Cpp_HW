@@ -35,7 +35,7 @@ public:
           top = rhs.top;
           capacity = rhs.capacity;
           T *mas = new T[capacity];
-          (*this).copy(rhs.mas);
+          copy(rhs.mas);
      }
 
      // оператор присваивания копированием
@@ -47,7 +47,7 @@ public:
                capacity = rhs.capacity;
                T *temp = mas;
                T *mas = new T[capacity];
-               (*this).copy(rhs.mas);
+               copy(rhs.mas);
                delete[] temp;
           }
           return *this;
@@ -71,13 +71,14 @@ public:
           if (this != &rhs)
           {
                T *temp = mas;
+               unsigned int tmp_top = top;
+               unsigned int tmp_cap = capacity;
                mas = rhs.mas;
                top = rhs.top;
                capacity = rhs.capacity;
-               rhs.mas = nullptr;
-               rhs.top = 0;
-               rhs.capacity = 0;
-               delete[] temp;
+               rhs.mas = temp;
+               rhs.top = tmp_top;
+               rhs.capacity = tmp_cap;
           }
           return *this;
      }
@@ -92,7 +93,7 @@ public:
                     capacity = 1;
                T *oldv = mas;
                mas = new T[capacity];
-               (*this).copy(oldv);
+               copy(oldv);
                delete[] oldv;
           }
           top += 1;
@@ -123,7 +124,7 @@ public:
                capacity = new_capacity;
                T *oldv = mas;
                mas = new T[capacity];
-               (*this).copy(oldv);
+               copy(oldv);
                delete[] oldv;
                return true;
           }
@@ -142,7 +143,7 @@ public:
 
      void shrink_to_fit()
      {
-          (*this).resize(top);
+          resize(top);
      } // очистить неиспользуемую память, переехав на новое место с уменьшением capacity до top
 
      void clear()
@@ -151,18 +152,19 @@ public:
      } // очистить содержимое недовектора, занимаемое место при этом не меняется
 };
 
-int main(){
+int main()
+{
      subvector<int> x;
      x.push_back(5);
      x.push_back(4);
      cout << x.pop_back() << endl;
 
-     subvector<int> a;
+     subvector<int> y;
 
-     a.push_back(50);
-     a.push_back(40);
-     a.push_back(10);
-     cout << a.pop_back() << endl;
-     a = move(x);
-     cout << a.pop_back() << endl;
+     y.push_back(50);
+     y.push_back(40);
+     y.push_back(10);
+     cout << y.pop_back() << endl;
+     y = move(x);
+     cout << y.pop_back() << endl;
 }
