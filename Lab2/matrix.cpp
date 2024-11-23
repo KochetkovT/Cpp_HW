@@ -1,3 +1,6 @@
+#include <vector>
+using namespace std;
+
 template<typename T>
 class Matrix {
 	vector<T> data;  // какой-то класс вектора: subvector или std::vector
