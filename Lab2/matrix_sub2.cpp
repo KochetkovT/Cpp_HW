@@ -21,75 +21,71 @@ class subvector
 	}
 
 public:
-	// конструктор
-	subvector() : mas(nullptr), top(0), capacity(0) {};
+	// Конструктор по умолчанию
+	subvector() : mas(nullptr), top(0), capacity(0) {}
 
-	subvector(unsigned n, T value=T()) : top(n), capacity(2 * n)
+	// Параметризованный конструктор
+	subvector(unsigned n, T value = T()) : top(n), capacity(2 * n)
 	{
-		T *tmp = new T[capacity];
-		for (int i = 0; i < top; i++)
+		mas = new T[capacity];
+		for (unsigned int i = 0; i < top; i++)
 		{
-			tmp[i] = value;
+			mas[i] = value;
 		}
-		mas = tmp;
 	}
 
-	// деструктор
+	// Деструктор
 	~subvector()
 	{
 		delete[] mas;
 	}
 
-	// конструктор копирования
+	// Конструктор копирования
 	subvector(const subvector<T> &rhs)
 	{
 		top = rhs.top;
 		capacity = rhs.capacity;
-		T *mas = new T[capacity];
+		mas = new T[capacity];
 		copy(rhs.mas);
 	}
 
-	// оператор присваивания копированием
+	// Оператор присваивания копированием
 	subvector &operator=(const subvector<T> &rhs)
 	{
 		if (this != &rhs)
 		{
+			delete[] mas;
 			top = rhs.top;
 			capacity = rhs.capacity;
-			T *temp = mas;
-			T *mas = new T[capacity];
+			mas = new T[capacity];
 			copy(rhs.mas);
-			delete[] temp;
 		}
 		return *this;
 	}
 
-	// конструктор перемещенея
+	// Конструктор перемещения
 	subvector(subvector<T> &&rhs)
 	{
 		mas = rhs.mas;
 		top = rhs.top;
 		capacity = rhs.capacity;
-		delete[] rhs.mas;
 		rhs.mas = nullptr;
 		rhs.top = 0;
 		rhs.capacity = 0;
 	}
 
-	// оператор присваивания перемещением
+	// Оператор присваивания перемещением
 	subvector &operator=(subvector<T> &&rhs)
 	{
 		if (this != &rhs)
 		{
-			T *temp = mas;
-			unsigned int tmp_top = top;
-			unsigned int tmp_cap = capacity;
+			delete[] mas;
 			mas = rhs.mas;
 			top = rhs.top;
 			capacity = rhs.capacity;
-			rhs.mas = temp;
-			rhs.top = tmp_top;
-			rhs.capacity = tmp_cap;
+			rhs.mas = nullptr;
+			rhs.top = 0;
+			rhs.capacity = 0;
 		}
 		return *this;
 	}
@@ -274,6 +270,7 @@ public:
 		{
 			if (temp(i, i) == 0)
 			{
+				bool swapped = false;
 				for (unsigned j = i + 1; j < rows_; ++j)
 				{
 					if (temp(j, i) != 0)
@@ -281,12 +278,13 @@ public:
 						++cnt;
 						for (unsigned k = 0; k < cols_; ++k)
 						{
-							swap(temp(i, k), temp(j, k));
+							std::swap(temp(i, k), temp(j, k));
 						}
+						swapped = true;
 						break;
 					}
 				}
-				if (!cnt)
+				if (!swapped)
 					return T(0);
 			}
 
@@ -378,7 +376,7 @@ std::ostream &operator<<(std::ostream &out, const Matrix<T> &matrix)
 
 int main()
 {
-    Matrix<double> m1(3, 3);
+	Matrix<double> m1(3, 3);
 	m1(0, 0) = 1;
 	m1(0, 1) = 2;
 	m1(0, 2) = 3;
@@ -389,9 +387,9 @@ int main()
 	m1(2, 1) = 6;
 	m1(2, 2) = 0;
 
-	cout << "Determinant of m1: " << m1.determinant() << endl; 
-// 	cout << m1 << endl;
-// 	cout << m1.transpose();
+	cout << "Determinant of m1: " << m1.determinant() << endl;
+	// 	cout << m1 << endl;
+	// 	cout << m1.transpose();
 
 	// 	cout << Matrix<float>::getSpecificDeterminant(5, 81).determinant();
 }
