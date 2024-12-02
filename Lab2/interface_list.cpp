@@ -14,6 +14,9 @@ class subforwardlist
         // сюда можете написать что угодно для вашего удобства, нет органичений по списку методов
     };
 
+    Node *begin;
+    Node *end; // (опционально !) можете хранить указатель на последний элемент
+
     Node *where_ptr(int where)
     {
         Node *ptr = begin;
@@ -66,13 +69,6 @@ class subforwardlist
     }
 
 public:
-    // структура, описывающая узел списка (раньше указатель на неё был самим списком)
-
-
-    Node *begin;
-    Node *end; // (опционально !) можете хранить указатель на последний элемент
-
-
     T get_data(unsigned int where) const
     {
         if (begin == nullptr)
@@ -98,6 +94,14 @@ public:
             }
         }
     }
+
+    // Node* get_begin(){
+    //     return begin;
+    // }
+
+    //  Node* get_end(){
+    //     return end;
+    // }
 
     // конструктор
     subforwardlist() : begin(nullptr), end(nullptr) {}
@@ -137,10 +141,12 @@ public:
             unsigned int sz = rhs.size();
             shrink_to_fit(sz);
             Node *sfl = begin;
+            Node *tmp = rhs.begin;
             for (unsigned int i = 0; i < sz; ++i)
             {
-                sfl->data = rhs.get_data(i);
+                sfl->data = tmp->data;
                 sfl = sfl->next;
+                tmp = tmp->next;
             }
         }
         return *this;
@@ -312,18 +318,13 @@ public:
 
 int main()
 {
-	subforwardlist<int> x;
-	x.push_back(5);
-	x.push_back(4);
-	x.push_forward(3);
+    subforwardlist<int> x;
+    x.push_back(5);
+    x.push_back(4);
+    x.push_forward(3);
 
-    cout << x.end->data << " "  << x.begin->data<< endl;
-	cout << x.pop_forward() << endl;
-	cout << x.end->data << " "  << x.begin->data<< endl;
-	cout << x.pop_forward() << endl;
-	cout << x.end->data << " "  << x.begin->data<< endl;
-	cout << x.pop_forward() << endl;
-	cout << x.pop_forward() << endl;
-
-
+    cout << x.pop_forward() << endl;
+    cout << x.pop_forward() << endl;
+    cout << x.pop_forward() << endl;
+    cout << x.pop_forward() << endl;
 }

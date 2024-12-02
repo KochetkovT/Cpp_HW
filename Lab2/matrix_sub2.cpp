@@ -1,4 +1,5 @@
 #include <iostream>
+#include <random>
 
 using namespace std;
 
@@ -92,26 +93,12 @@ public:
 
 	T &operator[](unsigned int i)
 	{
-		if (i < top)
-		{
-			return mas[i];
-		}
-		else
-		{
-			return mas[top - 1];
-		}
+		return mas[i];
 	}
 
 	T operator[](unsigned int i) const
 	{
-		if (i < top)
-		{
-			return mas[i];
-		}
-		else
-		{
-			return mas[top - 1];
-		}
+		return mas[i];
 	}
 
 	bool push_back(const T &d)
@@ -214,16 +201,21 @@ public:
 	{
 		unsigned rows = matrix.rows();
 		unsigned cols = matrix.cols();
+		std::random_device r;
+		default_random_engine gen(r());
+		uniform_real_distribution<double> coef_d(-10.0 / double(rows), 10.0 / double(rows));
+		uniform_int_distribution<unsigned> num_d(0, rows);
 		for (unsigned i = 0; i < rows; ++i)
 		{
-			for (unsigned j = 0; j < rows; ++j)
+			for (unsigned j = 0; j < rows / 2; ++j)
 			{
-				if (j != i)
+				unsigned w = num_d(gen);
+				if (w != i)
 				{
-					T coef = T(rand() % 10);
+					T coef = T(coef_d(gen));
 					for (unsigned k = 0; k < cols; ++k)
 					{
-						matrix(i, k) += coef * matrix(j, k);
+						matrix(i, k) += coef * matrix(w, k);
 					}
 				}
 			}
@@ -234,6 +226,9 @@ public:
 	// создание случайной матрицы с заданным детерминантом
 	static Matrix getSpecificDeterminant(unsigned n, T determinant)
 	{
+		std::random_device r;
+		default_random_engine gen(r());
+		uniform_real_distribution<double> el_d(-100.0 / double(n), 100.0 / double(n));
 		Matrix matrix(n, n, T(0));
 		for (unsigned i = 0; i < n; ++i)
 		{
@@ -252,7 +247,7 @@ public:
 				}
 				else if (j > i)
 				{
-					matrix(i, j) = T(rand() % 10);
+					matrix(i, j) = T(el_d(gen));
 				}
 			}
 		}
@@ -376,20 +371,22 @@ std::ostream &operator<<(std::ostream &out, const Matrix<T> &matrix)
 
 int main()
 {
-	Matrix<double> m1(3, 3);
-	m1(0, 0) = 1;
-	m1(0, 1) = 2;
-	m1(0, 2) = 3;
-	m1(1, 0) = -5;
-	m1(1, 1) = 1;
-	m1(1, 2) = 4;
-	m1(2, 0) = 5;
-	m1(2, 1) = 6;
-	m1(2, 2) = 0;
+	// 	Matrix<double> m1(3, 3);
+	// 	m1(0, 0) = 1;
+	// 	m1(0, 1) = 2;
+	// 	m1(0, 2) = 3;
+	// 	m1(1, 0) = -5;
+	// 	m1(1, 1) = 1;
+	// 	m1(1, 2) = 4;
+	// 	m1(2, 0) = 5;
+	// 	m1(2, 1) = 6;
+	// 	m1(2, 2) = 0;
 
-	cout << "Determinant of m1: " << m1.determinant() << endl;
+	// 	cout << "Determinant of m1: " << m1.determinant() << endl;
 	// 	cout << m1 << endl;
 	// 	cout << m1.transpose();
 
-	// 	cout << Matrix<float>::getSpecificDeterminant(5, 81).determinant();
+	cout << Matrix<double>::getSpecificDeterminant(200, 891).determinant() << endl;
+	cout << Matrix<double>::getSpecificDeterminant(100, -100).determinant() << endl;
+	cout << Matrix<double>::getSpecificDeterminant(50, 13).determinant() << endl;
 }

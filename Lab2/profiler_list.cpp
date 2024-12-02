@@ -13,6 +13,9 @@ class subforwardlist
         // сюда можете написать что угодно для вашего удобства, нет органичений по списку методов
     };
 
+    Node *begin;
+    Node *end; // (опционально !) можете хранить указатель на последний элемент
+
     Node *where_ptr(int where)
     {
         Node *ptr = begin;
@@ -65,13 +68,6 @@ class subforwardlist
     }
 
 public:
-    // структура, описывающая узел списка (раньше указатель на неё был самим списком)
-
-
-    Node *begin;
-    Node *end; // (опционально !) можете хранить указатель на последний элемент
-
-
     T get_data(unsigned int where) const
     {
         if (begin == nullptr)
@@ -97,6 +93,14 @@ public:
             }
         }
     }
+
+    // Node* get_begin(){
+    //     return begin;
+    // }
+
+    //  Node* get_end(){
+    //     return end;
+    // }
 
     // конструктор
     subforwardlist() : begin(nullptr), end(nullptr) {}
@@ -136,10 +140,12 @@ public:
             unsigned int sz = rhs.size();
             shrink_to_fit(sz);
             Node *sfl = begin;
+            Node *tmp = rhs.begin;
             for (unsigned int i = 0; i < sz; ++i)
             {
-                sfl->data = rhs.get_data(i);
+                sfl->data = tmp->data;
                 sfl = sfl->next;
+                tmp = tmp->next;
             }
         }
         return *this;
@@ -314,14 +320,14 @@ using std::cout;
 using std::endl;
 double get_time()
 {
-    return std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now().time_since_epoch()).count()/1e6;
+    return std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now().time_since_epoch()).count() / 1e6;
 }
 int rand_uns(int min, int max)
 {
-        unsigned seed = std::chrono::steady_clock::now().time_since_epoch().count();
-        static std::default_random_engine e(seed);
-        std::uniform_int_distribution<int> d(min, max);
-        return d(e);
+    unsigned seed = std::chrono::steady_clock::now().time_since_epoch().count();
+    static std::default_random_engine e(seed);
+    std::uniform_int_distribution<int> d(min, max);
+    return d(e);
 }
 int main()
 {
@@ -336,7 +342,7 @@ int main()
     double start = 0, finish = 0, total = 0;
     cout << std::fixed;
     cout.precision(4);
-//----------- Initialization
+    //----------- Initialization
     start = get_time();
     for (unsigned int i = 0; i < n; i++)
     {
@@ -353,7 +359,7 @@ int main()
     finish = get_time();
     cout << "Test sequence initialization: \t\t\t\t" << finish - start << endl;
     list sv{};
-//----------- Test 000 Straight push_back
+    //----------- Test 000 Straight push_back
     start = get_time();
     for (unsigned int i = 0; i < n; i++)
     {
@@ -362,25 +368,27 @@ int main()
     finish = get_time();
     cout << "000 Straight push_back: \t\t\t\t" << finish - start << endl;
     total += finish - start;
-//----------- Test 001 Straight pop_forward
+    //----------- Test 001 Straight pop_forward
     start = get_time();
     for (unsigned int i = 0; i < n; i++)
     {
         if (sv.pop_forward() != test_sequence[i])
         {
-            cout <<endl <<"--- !!! Failed push/pop consistency !!! ---" << endl;
+            cout << endl
+                 << "--- !!! Failed push/pop consistency !!! ---" << endl;
             return 0;
         }
     }
     finish = get_time();
     if (sv.size())
     {
-        cout <<endl <<"--- !!! Failed push/pop consistency, some elememts stuck !!! ---" << endl;
+        cout << endl
+             << "--- !!! Failed push/pop consistency, some elememts stuck !!! ---" << endl;
         return 0;
     }
     cout << "001 Straight pop_forward: \t\t\t\t" << finish - start << endl;
     total += finish - start;
-//----------- Test 002 Straight push_forward
+    //----------- Test 002 Straight push_forward
     start = get_time();
     for (unsigned int i = 0; i < n; i++)
     {
@@ -389,25 +397,27 @@ int main()
     finish = get_time();
     cout << "002 Straight push_forward: \t\t\t\t" << finish - start << endl;
     total += finish - start;
-//----------- Test 003 Straight pop_back
+    //----------- Test 003 Straight pop_back
     start = get_time();
     for (unsigned int i = 0; i < n; i++)
     {
         if (sv.pop_back() != test_sequence[i])
         {
-            cout <<endl <<"--- !!! Failed push/pop consistency !!! ---" << endl;
+            cout << endl
+                 << "--- !!! Failed push/pop consistency !!! ---" << endl;
             return 0;
         }
     }
     finish = get_time();
     if (sv.size())
     {
-        cout <<endl <<"--- !!! Failed push/pop consistency, some elememts stuck !!! ---" << endl;
+        cout << endl
+             << "--- !!! Failed push/pop consistency, some elememts stuck !!! ---" << endl;
         return 0;
     }
     cout << "003 Straight pop_back: \t\t\t\t\t" << finish - start << endl;
     total += finish - start;
-//----------- Test 004 Random push_where
+    //----------- Test 004 Random push_where
     for (unsigned int i = 0; i < n; i++)
     {
         sv.push_back(test_sequence[i]);
@@ -420,7 +430,8 @@ int main()
     finish = get_time();
     if (sv.size() != 2 * n)
     {
-        cout <<endl <<"--- !!! Failed push/pop consistency, wrong elements number !!! ---" << endl;
+        cout << endl
+             << "--- !!! Failed push/pop consistency, wrong elements number !!! ---" << endl;
         return 0;
     }
     ongoing_sum = 0;
@@ -430,17 +441,19 @@ int main()
     }
     if (sv.size())
     {
-        cout <<endl <<"--- !!! Failed push/pop consistency, some elememts stuck !!! ---" << endl;
+        cout << endl
+             << "--- !!! Failed push/pop consistency, some elememts stuck !!! ---" << endl;
         return 0;
     }
     if (ongoing_sum != 2 * test_sequence_sum)
     {
-        cout <<endl <<"--- !!! Failed push/pop consistency, sum incoherent !!! ---" << endl;
+        cout << endl
+             << "--- !!! Failed push/pop consistency, sum incoherent !!! ---" << endl;
         return 0;
     }
     cout << "004 Random push_where: \t\t\t\t\t" << finish - start << endl;
     total += finish - start;
-//----------- Test 005 Random erase_where
+    //----------- Test 005 Random erase_where
     for (unsigned int i = 0; i < 2 * n; i++)
     {
         sv.push_back(test_sequence[i % n]);
@@ -454,13 +467,14 @@ int main()
     finish = get_time();
     if (sv.size() != n)
     {
-        cout <<endl <<"--- !!! Failed push/pop consistency, wrong elements number !!! ---" << endl;
+        cout << endl
+             << "--- !!! Failed push/pop consistency, wrong elements number !!! ---" << endl;
         return 0;
     }
     cout << "005 Random erase_where: \t\t\t\t" << finish - start << " \t\t" << sum_for_O3 << endl;
     total += finish - start;
 
-//----------- Test 006 Random pop/push back equal amount
+    //----------- Test 006 Random pop/push back equal amount
     sum_for_O3 = 0; // This variable will be printed so O3 won't cut the whole thing.
     start = get_time();
     for (unsigned int i = 0; i < n; i++)
@@ -472,10 +486,11 @@ int main()
     }
     finish = get_time();
     sv = list{};
-    if (sv.size()) std::cout << "Move assign works wrongly!!!" << std::endl;
+    if (sv.size())
+        std::cout << "Move assign works wrongly!!!" << std::endl;
     cout << "006 Random pop/push back equal amount: \t\t\t" << finish - start << "\t\t" << sum_for_O3 << endl;
     total += finish - start;
-//----------- Test 007 Random pop/push back more push
+    //----------- Test 007 Random pop/push back more push
     sum_for_O3 = 0; // This variable will be printed so O3 won't cut the whole thing.
     start = get_time();
     for (unsigned int i = 0; i < n; i++)
@@ -489,7 +504,7 @@ int main()
     sv = list{};
     cout << "007 Random pop/push back more push: \t\t\t" << finish - start << "\t\t" << sum_for_O3 << endl;
     total += finish - start;
-//----------- Test 008 Random pop/push back much more push
+    //----------- Test 008 Random pop/push back much more push
     sum_for_O3 = 0; // This variable will be printed so O3 won't cut the whole thing.
     start = get_time();
     for (unsigned int i = 0; i < n; i++)
@@ -502,9 +517,9 @@ int main()
     finish = get_time();
 
     sv = list{};
-    cout << "008 Random pop/push back much more push: \t\t" << finish - start <<"\t\t" << sum_for_O3 << endl;
+    cout << "008 Random pop/push back much more push: \t\t" << finish - start << "\t\t" << sum_for_O3 << endl;
     total += finish - start;
-//----------- Test 009 Random pop/push forward equal amount
+    //----------- Test 009 Random pop/push forward equal amount
     sum_for_O3 = 0; // This variable will be printed so O3 won't cut the whole thing.
     start = get_time();
     for (unsigned int i = 0; i < n; i++)
@@ -518,7 +533,7 @@ int main()
     sv = list{};
     cout << "009 Random pop/push forward equal amount: \t\t" << finish - start << "\t\t" << sum_for_O3 << endl;
     total += finish - start;
-//----------- Test 010 Random pop/push forward more push
+    //----------- Test 010 Random pop/push forward more push
     sum_for_O3 = 0; // This variable will be printed so O3 won't cut the whole thing.
     start = get_time();
     for (unsigned int i = 0; i < n; i++)
@@ -532,7 +547,7 @@ int main()
     sv = list{};
     cout << "010 Random pop/push forward more push: \t\t\t" << finish - start << "\t\t" << sum_for_O3 << endl;
     total += finish - start;
-//----------- Test 011 Random pop/push forward much more push
+    //----------- Test 011 Random pop/push forward much more push
     sum_for_O3 = 0; // This variable will be printed so O3 won't cut the whole thing.
     start = get_time();
     for (unsigned int i = 0; i < n; i++)
@@ -544,9 +559,9 @@ int main()
     }
     finish = get_time();
     sv = list{};
-    cout << "011 Random pop/push forward much more push: \t\t" << finish - start <<"\t\t" << sum_for_O3 << endl;
+    cout << "011 Random pop/push forward much more push: \t\t" << finish - start << "\t\t" << sum_for_O3 << endl;
     total += finish - start;
-//----------- Test 012 Random pop/push four ways
+    //----------- Test 012 Random pop/push four ways
     sum_for_O3 = 0; // This variable will be printed so O3 won't cut the whole thing.
     start = get_time();
     for (unsigned int i = 0; i < n; i++)
@@ -564,16 +579,17 @@ int main()
     sv = list{};
     cout << "012 Random pop/push four ways: \t\t\t\t" << finish - start << "\t\t" << sum_for_O3 << endl;
     total += finish - start;
-//----------- End of tests
-//
-    cout << "-----------" << endl <<"Alltests finished, total time: \t" << total << endl;
+    //----------- End of tests
+    //
+    cout << "-----------" << endl
+         << "Alltests finished, total time: \t" << total << endl;
     delete[] test_sequence;
     delete[] pop_push_sequence_eq;
     delete[] pop_push_sequence_push;
     delete[] pop_push_sequence_pushpush;
     delete[] push_sequence,
-    delete[] pop_sequence,
-    delete[] four_ways_test;
+        delete[] pop_sequence,
+        delete[] four_ways_test;
 
     return 0;
 }
