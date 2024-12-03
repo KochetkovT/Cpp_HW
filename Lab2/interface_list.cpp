@@ -171,7 +171,7 @@ public:
         return *this;
     }
 
-    unsigned int size()
+    unsigned int size() const
     {
         unsigned int size = 0;
         if (begin != nullptr)
@@ -323,8 +323,12 @@ int main()
     x.push_back(4);
     x.push_forward(3);
 
-    cout << x.pop_forward() << endl;
-    cout << x.pop_forward() << endl;
-    cout << x.pop_forward() << endl;
-    cout << x.pop_forward() << endl;
+    subforwardlist<int> y;
+    y.push_back(3);
+    y.push_back(8);
+    y.push_forward(12);
+
+    x = y;
+    cout << x.pop_back();
+
 }

@@ -203,11 +203,12 @@ public:
 		unsigned cols = matrix.cols();
 		std::random_device r;
 		default_random_engine gen(r());
-		uniform_real_distribution<double> coef_d(-10.0 / double(rows), 10.0 / double(rows));
+		uniform_real_distribution<double> coef_d(-0.001, 0.001);
 		uniform_int_distribution<unsigned> num_d(0, rows);
+		unsigned rd = num_d(gen);
 		for (unsigned i = 0; i < rows; ++i)
 		{
-			for (unsigned j = 0; j < rows / 2; ++j)
+			for (unsigned j = 0; j < rd; ++j)
 			{
 				unsigned w = num_d(gen);
 				if (w != i)
@@ -228,7 +229,7 @@ public:
 	{
 		std::random_device r;
 		default_random_engine gen(r());
-		uniform_real_distribution<double> el_d(-100.0 / double(n), 100.0 / double(n));
+		uniform_real_distribution<double> el_d(float(-determinant) / 100, float(determinant) / 100);
 		Matrix matrix(n, n, T(0));
 		for (unsigned i = 0; i < n; ++i)
 		{
@@ -387,6 +388,6 @@ int main()
 	// 	cout << m1.transpose();
 
 	cout << Matrix<double>::getSpecificDeterminant(200, 891).determinant() << endl;
-	cout << Matrix<double>::getSpecificDeterminant(100, -100).determinant() << endl;
-	cout << Matrix<double>::getSpecificDeterminant(50, 13).determinant() << endl;
+	// 	cout << Matrix<double>::getSpecificDeterminant(100, -100).determinant() << endl;
+	// 	cout << Matrix<double>::getSpecificDeterminant(50, 13).determinant() << endl;
 }

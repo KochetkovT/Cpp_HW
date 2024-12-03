@@ -170,7 +170,7 @@ public:
         return *this;
     }
 
-    unsigned int size()
+    unsigned int size() const
     {
         unsigned int size = 0;
         if (begin != nullptr)
