@@ -1,5 +1,6 @@
 #include <iostream>
 #include <random>
+#include <cmath>
 
 using namespace std;
 
@@ -203,8 +204,8 @@ public:
 		unsigned cols = matrix.cols();
 		std::random_device r;
 		default_random_engine gen(r());
-		uniform_real_distribution<double> coef_d(-0.001, 0.001);
-		uniform_int_distribution<unsigned> num_d(0, rows);
+		uniform_real_distribution<double> coef_d(-1.0, 1.0);
+		uniform_int_distribution<unsigned> num_d(0, rows - 1);
 		unsigned rd = num_d(gen);
 		for (unsigned i = 0; i < rows; ++i)
 		{
@@ -229,7 +230,7 @@ public:
 	{
 		std::random_device r;
 		default_random_engine gen(r());
-		uniform_real_distribution<double> el_d(float(-determinant) / 100, float(determinant) / 100);
+		uniform_real_distribution<double> el_d(max(double(determinant) / pow(10, n), 0.1), 1.0);
 		Matrix matrix(n, n, T(0));
 		for (unsigned i = 0; i < n; ++i)
 		{
@@ -387,7 +388,7 @@ int main()
 	// 	cout << m1 << endl;
 	// 	cout << m1.transpose();
 
-	cout << Matrix<double>::getSpecificDeterminant(200, 891).determinant() << endl;
+	cout << Matrix<double>::getSpecificDeterminant(200, 800).determinant() << endl;
 	// 	cout << Matrix<double>::getSpecificDeterminant(100, -100).determinant() << endl;
 	// 	cout << Matrix<double>::getSpecificDeterminant(50, 13).determinant() << endl;
 }
