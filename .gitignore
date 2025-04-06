@@ -1,4 +1,5 @@
 build/
 gmsh-*/
 gmsh-*.tgz
-**/.vscode/
+.vscode
+*.vtu
